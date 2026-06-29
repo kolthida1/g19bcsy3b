@@ -7,7 +7,7 @@ services:
         working_dir: /var/www/html
         volumes:
             - ./laravel-app:/var/www/html
-            - laravel_data:/var/www/jhtml/vendor
+            - laravel_data:/var/www/html/vendor
             - ./docker/laravel/entrypoint.development.sh:/usr/local/bin/entrypoint.development.sh
             - ./docker/laravel/supervisord.development.conf:/etc/supervisor/conf.d/supervisord.development.conf
         ports:
@@ -24,13 +24,13 @@ services:
         working_dir: /app
         volumes:
             - ./vuejs-app:/app
-            - vuejs_data:/var/www/jhtml/node_modules
-            - ./docker/vuejs/entrypoint.development.sh:/usr/local/bin/entrypoint.development.sh
+            - vuejs_data:/app/node_modules
+           
         ports:
             - "5173:5173"
         depends_on:
             - laravel-service
-        command: [ "sh", "/usr/local/bin/entrypoint.development.sh" ]
+       
 
     mysql-service:
         image: mysql:8.0
