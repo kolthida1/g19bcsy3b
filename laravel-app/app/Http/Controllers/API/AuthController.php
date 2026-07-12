@@ -3,9 +3,6 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\User\SignInRequest;
-use App\Http\Requests\User\SignupRequest;
-use App\Http\Resources\User\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -13,9 +10,13 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    function signup(SignupRequest $request)
+    function signup(Request $request)
     {
-        
+        $request->validate([
+            'name' => 'required|string|max:100',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6|max:10|confirmed'
+        ]);
 
         $user = User::create([
             'name' => $request->name,
@@ -25,13 +26,16 @@ class AuthController extends Controller
 
         return response([
             'message' => 'User signed up.',
-            'user' => new UserResource($user)
+            'user' => $user
         ], 201);
     }
 
-    function signin(SignInRequest $request)
+    function signin(Request $request)
     {
-    
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|string|min:6|max:10'
+        ]);
 
         $user = User::where('email', $request->email)->first();
 
@@ -58,8 +62,8 @@ class AuthController extends Controller
         $user->currentAccessToken()->delete();
 
         // option 2
-        //$currentToken = $user->currentAccessToken();
-        //$user->tokens()->where('id', $currentToken->id)->delete();
+        $currentToken = $user->currentAccessToken();
+        $user->tokens()->where('id', $currentToken->id)->delete();
 
         return response([
             'message' => 'User signed out.'

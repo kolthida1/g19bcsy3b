@@ -2,5 +2,14 @@ FROM node:24.12.0-alpine
 
 WORKDIR /app
 
-CMD ["sh", "-c", "npm install && npm run dev -- --host 0.0.0.0"]
+COPY docker/vuejs/*.sh /usr/local/bin/
 
+COPY vuejs-app/package*.json ./
+
+RUN npm install
+
+COPY vuejs-app/ .
+
+RUN chmod +x /usr/local/bin/*.sh
+
+EXPOSE 5173

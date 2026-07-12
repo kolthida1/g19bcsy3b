@@ -1,10 +1,7 @@
 #!/bin/bash
 set -e
-
 # composer install
-# wait $!
-# npm install
-# wait $!
+#wait $!
 php artisan key:generate
 wait $!
 php artisan migrate
